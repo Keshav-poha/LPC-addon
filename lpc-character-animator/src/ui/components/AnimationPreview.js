@@ -127,6 +127,13 @@ export class AnimationPreview extends LitElement {
                     const path = cat.getPath(this.characterState.bodyType, this.animation);
                     pathsToLoad.push(path);
                     layerInfo.push({ path, zPos: cat.zPos });
+                    if (cat.getHeadPath) {
+                        const headPath = cat.getHeadPath(this.characterState.bodyType, this.animation);
+                        if (headPath) {
+                            pathsToLoad.push(headPath);
+                            layerInfo.push({ path: headPath, zPos: 12 }); // just above body
+                        }
+                    }
                 } else if (selectedItemId && selectedItemId !== "none") {
                     const item = cat.items.find(i => i.id === selectedItemId);
                     if (item && item.getPath) {

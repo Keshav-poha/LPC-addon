@@ -306,6 +306,15 @@ export const CATEGORIES = [
         ],
         getPath: (bodyType, animation) =>
             `body/bodies/${bodyType}/${animation}.png`,
+        getHeadPath: (bodyType, animation) => {
+            if (bodyType === "child") {
+                return `head/heads/human/child/${animation}.png`;
+            }
+            if (bodyType === "female" || bodyType === "pregnant" || bodyType === "teen") {
+                return `head/heads/human/female/${animation}.png`;
+            }
+            return `head/heads/human/male/${animation}.png`;
+        },
     },
     {
         id: "head",

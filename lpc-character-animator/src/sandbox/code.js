@@ -14,8 +14,7 @@ function start() {
         },
         addCreditsText: (textStr) => {
             if (!textStr) return;
-            const textNode = editor.createText();
-            textNode.text = textStr;
+            const textNode = editor.createText(textStr);
             
             // Set font size to be small
             const textContent = textNode.fullContent;
@@ -27,8 +26,11 @@ function start() {
             // Position at the bottom of the page if possible
             const page = editor.context.currentPage;
             if (page) {
-                // approximate bottom of the page
-                textNode.translation = { x: 20, y: page.height - 40 };
+                // Position 20px from the left, and 40px from the bottom
+                textNode.setPositionInParent(
+                    { x: 20, y: page.height - 40 },
+                    { x: 0, y: 0 }
+                );
             }
 
             editor.context.insertionParent.children.append(textNode);
