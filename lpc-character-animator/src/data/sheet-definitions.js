@@ -11,6 +11,18 @@
 const CDN_BASE =
     "https://raw.githubusercontent.com/LiberatedPixelCup/Universal-LPC-Spritesheet-Character-Generator/master/spritesheets";
 
+const ANIMATION_FOLDER_MAP = {
+    "1h_slash": "backslash",
+    "1h_backslash": "backslash",
+    "1h_halfslash": "halfslash",
+    "watering": "thrust",
+    "combat": "combat_idle"
+};
+
+export function getAnimationFolder(animation) {
+    return ANIMATION_FOLDER_MAP[animation] || animation;
+}
+
 /**
  * Body types available in the LPC generator
  */

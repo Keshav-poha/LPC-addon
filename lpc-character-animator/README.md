@@ -1,8 +1,8 @@
-# LPC Character Animator for Adobe Express
+# Animated Sprites for Adobe Express
 
 A premium, state-of-the-art Adobe Express Web Add-on designed to create, customize, animate, and export Liberated Pixel Cup (LPC) style characters. 
 
-The LPC Character Animator compiles pixel art sprite sheets on-demand, composites them in real-time, animates them, and enables direct drag-and-drop or insertion of high-quality animated GIFs directly onto your Adobe Express design canvas.
+Animated Sprites compiles pixel art sprite sheets on-demand, composites them in real-time, animates them, and enables direct drag-and-drop or insertion of high-quality animated GIFs directly onto your Adobe Express design canvas.
 
 ---
 
@@ -94,7 +94,7 @@ lpc-character-animator/
 
 3. Open or create any design document.
 
-4. In the left panel, click **Add-ons** > **In Development**. You should see **LPC Character Animator** listed there. Click on it to run the local add-on panel.
+4. In the left panel, click **Add-ons** > **In Development**. You should see **Animated Sprites** listed there. Click on it to run the local add-on panel.
 
 ---
 

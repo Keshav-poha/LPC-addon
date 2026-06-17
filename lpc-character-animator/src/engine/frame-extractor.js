@@ -50,11 +50,16 @@ export function extractFrame(sheet, col, row, exportSize = EXPORT_SIZE) {
  */
 export function extractAnimationFrames(sheet, direction, frameCount, exportSize = EXPORT_SIZE) {
     const frames = [];
-    const row = DIRECTIONS[direction];
+    let row = DIRECTIONS[direction];
 
     if (row === undefined) {
         console.error(`Invalid direction: ${direction}`);
         return frames;
+    }
+
+    // Force row 0 if the spritesheet contains only a single animation row
+    if (sheet && sheet.height === SPRITE_SIZE) {
+        row = 0;
     }
 
     for (let col = 0; col < frameCount; col++) {

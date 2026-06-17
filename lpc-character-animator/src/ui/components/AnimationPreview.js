@@ -3,7 +3,7 @@ import { customElement, property, state, query } from "lit/decorators.js";
 import { loadSprites } from "../../engine/sprite-loader";
 import { compositeAnimationLayers } from "../../engine/sprite-compositor";
 import { extractAnimationFrames } from "../../engine/frame-extractor";
-import { CATEGORIES } from "../../data/sheet-definitions";
+import { CATEGORIES, getAnimationFolder } from "../../data/sheet-definitions";
 import { ANIMATIONS, EXPORT_SIZE, ANIMATION_FPS } from "../../data/animation-map";
 import { encodeGif } from "../gif-exporter";
 
@@ -100,17 +100,45 @@ export class AnimationPreview extends LitElement {
         try {
             // 1. Determine all sprite paths needed based on characterState
             const pathsToLoad = [];
-        const layerInfo = []; // keep track of zPos and path
-        
-        for (const cat of CATEGORIES) {
-            // Check subcategories (like head -> ears, nose, eyes)
-            if (cat.subcategories) {
-                for (const sub of cat.subcategories) {
-                    const selectedItemId = this.characterState[cat.id]?.[sub.id];
-                    if (selectedItemId && selectedItemId !== "none") {
-                        const item = sub.items.find(i => i.id === selectedItemId);
+            const layerInfo = []; // keep track of zPos and path
+            const mappedAnim = getAnimationFolder(this.animation);
+            
+            for (const cat of CATEGORIES) {
+                // Check subcategories (like head -> ears, nose, eyes)
+                if (cat.subcategories) {
+                    for (const sub of cat.subcategories) {
+                        const selectedItemId = this.characterState[cat.id]?.[sub.id];
+                        if (selectedItemId && selectedItemId !== "none") {
+                            const item = sub.items.find(i => i.id === selectedItemId);
+                            if (item && item.getPath) {
+                                const path = item.getPath(this.characterState.bodyType, mappedAnim);
+                                if (path) {
+                                    pathsToLoad.push(path);
+                                    layerInfo.push({ path, zPos: cat.zPos });
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    // Regular category (like hair, torso)
+                    const selectedItemId = this.characterState[cat.id];
+                    
+                    // Special case for body which doesn't have selectable items in the same way
+                    if (cat.id === "body") {
+                        const path = cat.getPath(this.characterState.bodyType, mappedAnim);
+                        pathsToLoad.push(path);
+                        layerInfo.push({ path, zPos: cat.zPos });
+                        if (cat.getHeadPath) {
+                            const headPath = cat.getHeadPath(this.characterState.bodyType, mappedAnim);
+                            if (headPath) {
+                                pathsToLoad.push(headPath);
+                                layerInfo.push({ path: headPath, zPos: 12 }); // just above body
+                            }
+                        }
+                    } else if (selectedItemId && selectedItemId !== "none") {
+                        const item = cat.items.find(i => i.id === selectedItemId);
                         if (item && item.getPath) {
-                            const path = item.getPath(this.characterState.bodyType, this.animation);
+                            const path = item.getPath(this.characterState.bodyType, mappedAnim);
                             if (path) {
                                 pathsToLoad.push(path);
                                 layerInfo.push({ path, zPos: cat.zPos });
@@ -118,34 +146,7 @@ export class AnimationPreview extends LitElement {
                         }
                     }
                 }
-            } else {
-                // Regular category (like hair, torso)
-                const selectedItemId = this.characterState[cat.id];
-                
-                // Special case for body which doesn't have selectable items in the same way
-                if (cat.id === "body") {
-                    const path = cat.getPath(this.characterState.bodyType, this.animation);
-                    pathsToLoad.push(path);
-                    layerInfo.push({ path, zPos: cat.zPos });
-                    if (cat.getHeadPath) {
-                        const headPath = cat.getHeadPath(this.characterState.bodyType, this.animation);
-                        if (headPath) {
-                            pathsToLoad.push(headPath);
-                            layerInfo.push({ path: headPath, zPos: 12 }); // just above body
-                        }
-                    }
-                } else if (selectedItemId && selectedItemId !== "none") {
-                    const item = cat.items.find(i => i.id === selectedItemId);
-                    if (item && item.getPath) {
-                        const path = item.getPath(this.characterState.bodyType, this.animation);
-                        if (path) {
-                            pathsToLoad.push(path);
-                            layerInfo.push({ path, zPos: cat.zPos });
-                        }
-                    }
-                }
             }
-        }
 
         // 2. Load all sprites
         const images = await loadSprites(pathsToLoad);
