@@ -21,24 +21,8 @@ export class CreditsManager extends LitElement {
     async _copyCredits() {
         const text = formatCreditsText(this._credits);
         try {
-            if (navigator.clipboard && window.isSecureContext) {
-                await navigator.clipboard.writeText(text);
-            } else {
-                const textArea = document.createElement("textarea");
-                textArea.value = text;
-                textArea.style.position = "fixed";
-                textArea.style.left = "-999999px";
-                textArea.style.top = "-999999px";
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-                try {
-                    document.execCommand('copy');
-                } catch (err) {
-                    console.error('Fallback copy failed', err);
-                }
-                textArea.remove();
-            }
+            await navigator.clipboard.writeText(text);
+            // Could show a toast/tooltip here if desired
             console.log("Credits copied to clipboard");
         } catch (err) {
             console.error("Failed to copy credits", err);

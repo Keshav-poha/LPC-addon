@@ -131,13 +131,6 @@ export const style = css`
 
 /* Animation Preview */
 
-.top-layout {
-    display: flex;
-    flex-direction: row;
-    gap: 12px;
-    margin-bottom: 10px;
-}
-
 .preview-container {
     background-color: var(--spectrum-global-color-gray-200);
     border-radius: 4px;
@@ -145,11 +138,11 @@ export const style = css`
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 140px;
-    height: 140px;
-    flex-shrink: 0;
+    width: 100%;
+    aspect-ratio: 1; /* Square */
     overflow: hidden;
     position: relative;
+    margin-bottom: 10px;
     background-image: 
         linear-gradient(45deg, var(--spectrum-global-color-gray-300) 25%, transparent 25%), 
         linear-gradient(-45deg, var(--spectrum-global-color-gray-300) 25%, transparent 25%), 
@@ -157,13 +150,6 @@ export const style = css`
         linear-gradient(-45deg, transparent 75%, var(--spectrum-global-color-gray-300) 75%);
     background-size: 20px 20px;
     background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-}
-
-.side-controls {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    flex: 1;
 }
 
 canvas.preview-canvas {
