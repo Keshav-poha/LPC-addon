@@ -66,6 +66,220 @@ export const HAIR_COLORS = [
  */
 const getAgeGroup = (bt) => (bt === 'child' ? 'child' : 'adult');
 
+function getTorsoGender(bt) {
+    if (bt === "female" || bt === "pregnant" || bt === "teen") {
+        return "female";
+    }
+    if (bt === "male" || bt === "muscular") {
+        return "male";
+    }
+    return null;
+}
+
+function getTorsoPath(itemId, bt, anim) {
+    if (bt === "child") return null;
+    const gender = getTorsoGender(bt);
+    if (!gender) return null;
+    
+    if (itemId === "chain_mail_shirt") {
+        return `torso/chainmail/${gender}/${anim}.png`;
+    }
+    if (itemId === "leather_armor") {
+        return `torso/armour/leather/${gender}/${anim}.png`;
+    }
+    if (itemId === "plate_armor") {
+        return `torso/armour/plate/${gender}/${anim}.png`;
+    }
+    if (itemId === "longsleeve_laced") {
+        if (gender !== "male") return null;
+        return `torso/clothes/longsleeve/laced/male/${anim}/white.png`;
+    }
+    if (itemId === "longsleeve_white") {
+        return `torso/clothes/longsleeve/longsleeve/${gender}/${anim}.png`;
+    }
+    if (itemId === "shirt_sleeveless") {
+        return `torso/clothes/sleeveless/sleeveless/${gender}/${anim}/white.png`;
+    }
+    if (itemId === "vest_leather") {
+        if (gender !== "male") return null;
+        return `torso/clothes/vest/male/${anim}/leather.png`;
+    }
+    if (itemId === "robe") {
+        if (gender !== "female") return null;
+        return `torso/clothes/robe/female/${anim}/white.png`;
+    }
+    return null;
+}
+
+function getLegsPrefix(bt) {
+    if (bt === "child") return "child";
+    if (bt === "female" || bt === "pregnant" || bt === "teen") return "thin";
+    if (bt === "male" || bt === "muscular") return "male";
+    return null;
+}
+
+function getLegsPath(itemId, bt, anim) {
+    const dir = getLegsPrefix(bt);
+    if (!dir) return null;
+    
+    if (itemId === "pants_white") {
+        return `legs/pants/${dir}/${anim}/white.png`;
+    }
+    if (itemId === "pants_teal") {
+        if (dir === "child") return null;
+        return `legs/pants/${dir}/${anim}/teal.png`;
+    }
+    if (itemId === "pants_red") {
+        const colorFile = (dir === "child" || dir === "thin") ? "red.png" : "magenta.png";
+        return `legs/pants/${dir}/${anim}/${colorFile}`;
+    }
+    if (itemId === "legion_skirt") {
+        if (bt === "child") return null;
+        return `legs/skirts/legion/${dir}/${anim}.png`;
+    }
+    if (itemId === "robe_skirt") {
+        return null;
+    }
+    if (itemId === "plate_legs") {
+        if (bt === "child" || bt === "pregnant" || bt === "muscular") return null;
+        return `legs/armour/plate/${dir}/${anim}.png`;
+    }
+    return null;
+}
+
+function getFeetPath(itemId, bt, anim) {
+    if (bt === "child") return null;
+    const dir = (bt === "female" || bt === "pregnant" || bt === "teen") ? "thin" : "male";
+    
+    if (itemId === "shoes_brown") {
+        return `feet/shoes/basic/${dir}/${anim}.png`;
+    }
+    if (itemId === "shoes_black") {
+        return `feet/shoes/revised/${dir}/${anim}.png`;
+    }
+    if (itemId === "boots_tall") {
+        return `feet/boots/basic/${dir}/${anim}.png`;
+    }
+    if (itemId === "plate_boots") {
+        if (bt === "child" || bt === "pregnant" || bt === "teen" || bt === "muscular") return null;
+        const plateDir = (bt === "female") ? "female" : "male";
+        return `feet/armour/plate/${plateDir}/${anim}/steel.png`;
+    }
+    if (itemId === "golden_boots") {
+        return null;
+    }
+    return null;
+}
+
+function getArmsPath(itemId, bt, anim) {
+    if (bt === "child") return null;
+    const dir = (bt === "female" || bt === "pregnant" || bt === "teen") ? "thin" : "male";
+    
+    if (itemId === "plate_arms") {
+        return `arms/armour/plate/${dir}/${anim}.png`;
+    }
+    if (itemId === "leather_bracers" || itemId === "plate_bracers") {
+        return `arms/bracers/${dir}/${anim}.png`;
+    }
+    if (itemId === "gloves") {
+        return `arms/hands/gloves/${dir}/${anim}.png`;
+    }
+    return null;
+}
+
+function getWeaponPath(itemId, bt, anim) {
+    if (bt === "child") return null;
+    
+    if (itemId === "dagger") {
+        return `weapon/sword/dagger/${anim}/dagger.png`;
+    }
+    if (itemId === "longsword") {
+        return `weapon/sword/longsword/${anim}/longsword.png`;
+    }
+    if (itemId === "rapier") {
+        return `weapon/sword/rapier/${anim}/rapier.png`;
+    }
+    if (itemId === "spear") {
+        return `weapon/polearm/spear/foreground/${anim}/steel.png`;
+    }
+    if (itemId === "bow") {
+        if (anim === "walk") {
+            return `weapon/ranged/bow/normal/walk/foreground/normal.png`;
+        }
+        if (anim === "shoot") {
+            return `weapon/ranged/bow/normal/universal/foreground/shoot/normal.png`;
+        }
+        if (anim === "hurt") {
+            return `weapon/ranged/bow/normal/universal/foreground/hurt/normal.png`;
+        }
+        return null;
+    }
+    if (itemId === "shield_round") {
+        if (bt === "teen") return null;
+        return `shield/round/${anim}.png`;
+    }
+    if (itemId === "shield_kite") {
+        if (bt === "teen") return null;
+        const dir = (bt === "female" || bt === "pregnant") ? "female" : "male";
+        return `shield/kite/${dir}/${anim}/kite_gray.png`;
+    }
+    return null;
+}
+
+function getToolPath(itemId, bt, anim) {
+    if (bt === "child") return null;
+    const gender = (bt === "female" || bt === "pregnant" || bt === "teen") ? "female" : "male";
+    
+    if (itemId === "woodaxe") {
+        return `tools/smash/universal/${gender}/${anim}/axe.png`;
+    }
+    if (itemId === "pickaxe") {
+        return `tools/smash/universal/${gender}/${anim}/pickaxe.png`;
+    }
+    if (itemId === "hoe") {
+        return `tools/thrust/foreground/${anim}/hoe.png`;
+    }
+    if (itemId === "wateringcan") {
+        return `tools/thrust/foreground/${anim}/watering.png`;
+    }
+    return null;
+}
+
+function getHairPath(hairId, bt, anim) {
+    if (bt === "child") {
+        if (hairId === "jewfro") return `hair/jewfro/child/${anim}.png`;
+        if (hairId === "wavy") return `hair/wavy/child/${anim}.png`;
+        if (hairId === "swoop") return `hair/swoop_side/child/${anim}.png`;
+        return null;
+    }
+    
+    const fgStyles = [
+        "bangslong2",
+        "braids",
+        "ponytail",
+        "ponytail2",
+        "princess",
+        "shoulderl",
+        "shoulderr",
+        "wavy",
+        "xlong"
+    ];
+    
+    let folder = hairId;
+    if (hairId === "braids") folder = "braid";
+    else if (hairId === "curly") folder = "curly_long";
+    else if (hairId === "messy2") folder = "long_messy2";
+    else if (hairId === "xlong") folder = "curls_large_xlong";
+    
+    const unsupported = ["bob2", "mohawk", "longknot", "shortknot"];
+    if (unsupported.includes(hairId)) return null;
+    
+    if (fgStyles.includes(hairId)) {
+        return `hair/${folder}/adult/fg/${anim}.png`;
+    }
+    return `hair/${folder}/adult/${anim}.png`;
+}
+
 /**
  * All sprite categories with their options and z-ordering.
  *
@@ -127,19 +341,19 @@ export const CATEGORIES = [
                         id: "bignose",
                         label: "Big Nose",
                         getPath: (bt, anim) =>
-                            `head/nose/big/${getAgeGroup(bt)}/${anim}.png`,
+                            bt === "child" ? null : `head/nose/big/adult/${anim}.png`,
                     },
                     {
                         id: "buttonnose",
                         label: "Button Nose",
                         getPath: (bt, anim) =>
-                            `head/nose/button/${getAgeGroup(bt)}/${anim}.png`,
+                            bt === "child" ? null : `head/nose/button/adult/${anim}.png`,
                     },
                     {
                         id: "straightnose",
                         label: "Straight Nose",
                         getPath: (bt, anim) =>
-                            `head/nose/straight/${getAgeGroup(bt)}/${anim}.png`,
+                            bt === "child" ? null : `head/nose/straight/adult/${anim}.png`,
                     },
                 ],
             },
@@ -152,25 +366,33 @@ export const CATEGORIES = [
                         id: "eyes_blue",
                         label: "Blue Eyes",
                         getPath: (bt, anim) =>
-                            `head/eyes/blue/${getAgeGroup(bt)}/${anim}.png`,
+                            bt === "child"
+                                ? `eyes/human/child/${anim}/blue.png`
+                                : `eyes/human/adult/neutral/default/${anim}/blue.png`,
                     },
                     {
                         id: "eyes_brown",
                         label: "Brown Eyes",
                         getPath: (bt, anim) =>
-                            `head/eyes/brown/${getAgeGroup(bt)}/${anim}.png`,
+                            bt === "child"
+                                ? `eyes/human/child/${anim}/brown.png`
+                                : `eyes/human/adult/neutral/default/${anim}/brown.png`,
                     },
                     {
                         id: "eyes_green",
                         label: "Green Eyes",
                         getPath: (bt, anim) =>
-                            `head/eyes/green/${getAgeGroup(bt)}/${anim}.png`,
+                            bt === "child"
+                                ? `eyes/human/child/${anim}/green.png`
+                                : `eyes/human/adult/neutral/default/${anim}/green.png`,
                     },
                     {
                         id: "eyes_gray",
                         label: "Gray Eyes",
                         getPath: (bt, anim) =>
-                            `head/eyes/gray/${getAgeGroup(bt)}/${anim}.png`,
+                            bt === "child"
+                                ? `eyes/human/child/${anim}/gray.png`
+                                : `eyes/human/adult/neutral/default/${anim}/gray.png`,
                     },
                 ],
             },
@@ -183,196 +405,44 @@ export const CATEGORIES = [
         required: false,
         items: [
             { id: "none", label: "None", path: null },
-            {
-                id: "bangs",
-                label: "Bangs",
-                getPath: (bt, anim) => `hair/bangs/${bt}/${anim}.png`,
-            },
-            {
-                id: "bangslong",
-                label: "Bangs Long",
-                getPath: (bt, anim) => `hair/bangslong/${bt}/${anim}.png`,
-            },
-            {
-                id: "bangslong2",
-                label: "Bangs Long 2",
-                getPath: (bt, anim) => `hair/bangslong2/${bt}/${anim}.png`,
-            },
-            {
-                id: "bangsshort",
-                label: "Bangs Short",
-                getPath: (bt, anim) => `hair/bangsshort/${bt}/${anim}.png`,
-            },
-            {
-                id: "bedhead",
-                label: "Bedhead",
-                getPath: (bt, anim) => `hair/bedhead/${bt}/${anim}.png`,
-            },
-            {
-                id: "bob",
-                label: "Bob",
-                getPath: (bt, anim) => `hair/bob/${bt}/${anim}.png`,
-            },
-            {
-                id: "bob2",
-                label: "Bob 2",
-                getPath: (bt, anim) => `hair/bob2/${bt}/${anim}.png`,
-            },
-            {
-                id: "braids",
-                label: "Braids",
-                getPath: (bt, anim) => `hair/braids/${bt}/${anim}.png`,
-            },
-            {
-                id: "buzzcut",
-                label: "Buzzcut",
-                getPath: (bt, anim) => `hair/buzzcut/${bt}/${anim}.png`,
-            },
-            {
-                id: "cornrows",
-                label: "Cornrows",
-                getPath: (bt, anim) => `hair/cornrows/${bt}/${anim}.png`,
-            },
-            {
-                id: "curly",
-                label: "Curly",
-                getPath: (bt, anim) => `hair/curly/${bt}/${anim}.png`,
-            },
-            {
-                id: "curtains",
-                label: "Curtains",
-                getPath: (bt, anim) => `hair/curtains/${bt}/${anim}.png`,
-            },
-            {
-                id: "jewfro",
-                label: "Jewfro",
-                getPath: (bt, anim) => `hair/jewfro/${bt}/${anim}.png`,
-            },
-            {
-                id: "longhawk",
-                label: "Longhawk",
-                getPath: (bt, anim) => `hair/longhawk/${bt}/${anim}.png`,
-            },
-            {
-                id: "longknot",
-                label: "Long Knot",
-                getPath: (bt, anim) => `hair/longknot/${bt}/${anim}.png`,
-            },
-            {
-                id: "loose",
-                label: "Loose",
-                getPath: (bt, anim) => `hair/loose/${bt}/${anim}.png`,
-            },
-            {
-                id: "messy1",
-                label: "Messy",
-                getPath: (bt, anim) => `hair/messy1/${bt}/${anim}.png`,
-            },
-            {
-                id: "messy2",
-                label: "Messy 2",
-                getPath: (bt, anim) => `hair/messy2/${bt}/${anim}.png`,
-            },
-            {
-                id: "mohawk",
-                label: "Mohawk",
-                getPath: (bt, anim) => `hair/mohawk/${bt}/${anim}.png`,
-            },
-            {
-                id: "natural",
-                label: "Natural",
-                getPath: (bt, anim) => `hair/natural/${bt}/${anim}.png`,
-            },
-            {
-                id: "page",
-                label: "Page",
-                getPath: (bt, anim) => `hair/page/${bt}/${anim}.png`,
-            },
-            {
-                id: "page2",
-                label: "Page 2",
-                getPath: (bt, anim) => `hair/page2/${bt}/${anim}.png`,
-            },
-            {
-                id: "parted",
-                label: "Parted",
-                getPath: (bt, anim) => `hair/parted/${bt}/${anim}.png`,
-            },
-            {
-                id: "pixie",
-                label: "Pixie",
-                getPath: (bt, anim) => `hair/pixie/${bt}/${anim}.png`,
-            },
-            {
-                id: "plain",
-                label: "Plain",
-                getPath: (bt, anim) => `hair/plain/${bt}/${anim}.png`,
-            },
-            {
-                id: "ponytail",
-                label: "Ponytail",
-                getPath: (bt, anim) => `hair/ponytail/${bt}/${anim}.png`,
-            },
-            {
-                id: "ponytail2",
-                label: "Ponytail 2",
-                getPath: (bt, anim) => `hair/ponytail2/${bt}/${anim}.png`,
-            },
-            {
-                id: "princess",
-                label: "Princess",
-                getPath: (bt, anim) => `hair/princess/${bt}/${anim}.png`,
-            },
-            {
-                id: "shorthawk",
-                label: "Shorthawk",
-                getPath: (bt, anim) => `hair/shorthawk/${bt}/${anim}.png`,
-            },
-            {
-                id: "shortknot",
-                label: "Short Knot",
-                getPath: (bt, anim) => `hair/shortknot/${bt}/${anim}.png`,
-            },
-            {
-                id: "shoulderl",
-                label: "Shoulder Left",
-                getPath: (bt, anim) => `hair/shoulderl/${bt}/${anim}.png`,
-            },
-            {
-                id: "shoulderr",
-                label: "Shoulder Right",
-                getPath: (bt, anim) => `hair/shoulderr/${bt}/${anim}.png`,
-            },
-            {
-                id: "spiked",
-                label: "Spiked",
-                getPath: (bt, anim) => `hair/spiked/${bt}/${anim}.png`,
-            },
-            {
-                id: "spiked2",
-                label: "Spiked 2",
-                getPath: (bt, anim) => `hair/spiked2/${bt}/${anim}.png`,
-            },
-            {
-                id: "swoop",
-                label: "Swoop",
-                getPath: (bt, anim) => `hair/swoop/${bt}/${anim}.png`,
-            },
-            {
-                id: "unkempt",
-                label: "Unkempt",
-                getPath: (bt, anim) => `hair/unkempt/${bt}/${anim}.png`,
-            },
-            {
-                id: "wavy",
-                label: "Wavy",
-                getPath: (bt, anim) => `hair/wavy/${bt}/${anim}.png`,
-            },
-            {
-                id: "xlong",
-                label: "Extra Long",
-                getPath: (bt, anim) => `hair/xlong/${bt}/${anim}.png`,
-            },
+            { id: "bangs", label: "Bangs", getPath: (bt, anim) => getHairPath("bangs", bt, anim) },
+            { id: "bangslong", label: "Bangs Long", getPath: (bt, anim) => getHairPath("bangslong", bt, anim) },
+            { id: "bangslong2", label: "Bangs Long 2", getPath: (bt, anim) => getHairPath("bangslong2", bt, anim) },
+            { id: "bangsshort", label: "Bangs Short", getPath: (bt, anim) => getHairPath("bangsshort", bt, anim) },
+            { id: "bedhead", label: "Bedhead", getPath: (bt, anim) => getHairPath("bedhead", bt, anim) },
+            { id: "bob", label: "Bob", getPath: (bt, anim) => getHairPath("bob", bt, anim) },
+            { id: "bob2", label: "Bob 2", getPath: (bt, anim) => getHairPath("bob2", bt, anim) },
+            { id: "braids", label: "Braids", getPath: (bt, anim) => getHairPath("braids", bt, anim) },
+            { id: "buzzcut", label: "Buzzcut", getPath: (bt, anim) => getHairPath("buzzcut", bt, anim) },
+            { id: "cornrows", label: "Cornrows", getPath: (bt, anim) => getHairPath("cornrows", bt, anim) },
+            { id: "curly", label: "Curly", getPath: (bt, anim) => getHairPath("curly", bt, anim) },
+            { id: "curtains", label: "Curtains", getPath: (bt, anim) => getHairPath("curtains", bt, anim) },
+            { id: "jewfro", label: "Jewfro", getPath: (bt, anim) => getHairPath("jewfro", bt, anim) },
+            { id: "longhawk", label: "Longhawk", getPath: (bt, anim) => getHairPath("longhawk", bt, anim) },
+            { id: "longknot", label: "Long Knot", getPath: (bt, anim) => getHairPath("longknot", bt, anim) },
+            { id: "loose", label: "Loose", getPath: (bt, anim) => getHairPath("loose", bt, anim) },
+            { id: "messy1", label: "Messy", getPath: (bt, anim) => getHairPath("messy1", bt, anim) },
+            { id: "messy2", label: "Messy 2", getPath: (bt, anim) => getHairPath("messy2", bt, anim) },
+            { id: "mohawk", label: "Mohawk", getPath: (bt, anim) => getHairPath("mohawk", bt, anim) },
+            { id: "natural", label: "Natural", getPath: (bt, anim) => getHairPath("natural", bt, anim) },
+            { id: "page", label: "Page", getPath: (bt, anim) => getHairPath("page", bt, anim) },
+            { id: "page2", label: "Page 2", getPath: (bt, anim) => getHairPath("page2", bt, anim) },
+            { id: "parted", label: "Parted", getPath: (bt, anim) => getHairPath("parted", bt, anim) },
+            { id: "pixie", label: "Pixie", getPath: (bt, anim) => getHairPath("pixie", bt, anim) },
+            { id: "plain", label: "Plain", getPath: (bt, anim) => getHairPath("plain", bt, anim) },
+            { id: "ponytail", label: "Ponytail", getPath: (bt, anim) => getHairPath("ponytail", bt, anim) },
+            { id: "ponytail2", label: "Ponytail 2", getPath: (bt, anim) => getHairPath("ponytail2", bt, anim) },
+            { id: "princess", label: "Princess", getPath: (bt, anim) => getHairPath("princess", bt, anim) },
+            { id: "shorthawk", label: "Shorthawk", getPath: (bt, anim) => getHairPath("shorthawk", bt, anim) },
+            { id: "shortknot", label: "Short Knot", getPath: (bt, anim) => getHairPath("shortknot", bt, anim) },
+            { id: "shoulderl", label: "Shoulder Left", getPath: (bt, anim) => getHairPath("shoulderl", bt, anim) },
+            { id: "shoulderr", label: "Shoulder Right", getPath: (bt, anim) => getHairPath("shoulderr", bt, anim) },
+            { id: "spiked", label: "Spiked", getPath: (bt, anim) => getHairPath("spiked", bt, anim) },
+            { id: "spiked2", label: "Spiked 2", getPath: (bt, anim) => getHairPath("spiked2", bt, anim) },
+            { id: "swoop", label: "Swoop", getPath: (bt, anim) => getHairPath("swoop", bt, anim) },
+            { id: "unkempt", label: "Unkempt", getPath: (bt, anim) => getHairPath("unkempt", bt, anim) },
+            { id: "wavy", label: "Wavy", getPath: (bt, anim) => getHairPath("wavy", bt, anim) },
+            { id: "xlong", label: "Extra Long", getPath: (bt, anim) => getHairPath("xlong", bt, anim) },
         ],
     },
     {
@@ -386,49 +456,47 @@ export const CATEGORIES = [
                 id: "bandana",
                 label: "Bandana",
                 getPath: (bt, anim) =>
-                    `hat/cloth/bandana/adult/${anim}.png`,
+                    bt === "child" ? null : `hat/cloth/bandana/adult/${anim}.png`,
             },
             {
                 id: "chain_helmet",
                 label: "Chain Helmet",
                 getPath: (bt, anim) =>
-                    `hat/helmet/chain/adult/${anim}.png`,
+                    bt === "child" ? null : `hat/helmet/mail/adult/${anim}.png`,
             },
             {
                 id: "leather_cap",
                 label: "Leather Cap",
                 getPath: (bt, anim) =>
-                    `hat/cloth/cap/adult/${anim}.png`,
+                    bt === "child" ? null : `hat/cloth/leather_cap/adult/${anim}.png`,
             },
             {
                 id: "plate_helmet",
                 label: "Plate Helmet",
                 getPath: (bt, anim) =>
-                    `hat/helmet/plate/adult/${anim}.png`,
+                    bt === "child" ? null : `hat/helmet/bascinet/adult/${anim}.png`,
             },
             {
                 id: "tiara",
                 label: "Tiara",
                 getPath: (bt, anim) =>
-                    `hat/formal/tiara/adult/${anim}.png`,
+                    bt === "child" ? null : `hat/formal/tiara/adult/${anim}.png`,
             },
             {
                 id: "hood_chain",
                 label: "Hood (Chain)",
-                getPath: (bt, anim) =>
-                    `hat/helmet/hood_chain/adult/${anim}.png`,
+                getPath: () => null,
             },
             {
                 id: "hood_cloth",
                 label: "Hood (Cloth)",
                 getPath: (bt, anim) =>
-                    `hat/cloth/hood/adult/${anim}.png`,
+                    bt === "child" ? null : `hat/cloth/hood/adult/${anim}.png`,
             },
             {
                 id: "hood_robe",
                 label: "Hood (Robe)",
-                getPath: (bt, anim) =>
-                    `hat/cloth/robe_hood/adult/${anim}.png`,
+                getPath: () => null,
             },
         ],
     },
@@ -442,50 +510,42 @@ export const CATEGORIES = [
             {
                 id: "chain_mail_shirt",
                 label: "Chain Mail",
-                getPath: (bt, anim) =>
-                    `torso/chain/mail(v2)/${bt}/${anim}.png`,
+                getPath: (bt, anim) => getTorsoPath("chain_mail_shirt", bt, anim),
             },
             {
                 id: "leather_armor",
                 label: "Leather Armor",
-                getPath: (bt, anim) =>
-                    `torso/leather/chest_v2/${bt}/${anim}.png`,
+                getPath: (bt, anim) => getTorsoPath("leather_armor", bt, anim),
             },
             {
                 id: "plate_armor",
                 label: "Plate Armor",
-                getPath: (bt, anim) =>
-                    `torso/plate/chest_armour/${bt}/${anim}.png`,
+                getPath: (bt, anim) => getTorsoPath("plate_armor", bt, anim),
             },
             {
                 id: "longsleeve_laced",
                 label: "Longsleeve (Laced)",
-                getPath: (bt, anim) =>
-                    `torso/shirts/longsleeve/laced/${bt}/${anim}.png`,
+                getPath: (bt, anim) => getTorsoPath("longsleeve_laced", bt, anim),
             },
             {
                 id: "longsleeve_white",
                 label: "Longsleeve (White)",
-                getPath: (bt, anim) =>
-                    `torso/shirts/longsleeve/white_longsleeve/${bt}/${anim}.png`,
+                getPath: (bt, anim) => getTorsoPath("longsleeve_white", bt, anim),
             },
             {
                 id: "shirt_sleeveless",
                 label: "Sleeveless Shirt",
-                getPath: (bt, anim) =>
-                    `torso/shirts/sleeveless/brown_sleeveless/${bt}/${anim}.png`,
+                getPath: (bt, anim) => getTorsoPath("shirt_sleeveless", bt, anim),
             },
             {
                 id: "vest_leather",
                 label: "Leather Vest",
-                getPath: (bt, anim) =>
-                    `torso/leather/vest/${bt}/${anim}.png`,
+                getPath: (bt, anim) => getTorsoPath("vest_leather", bt, anim),
             },
             {
                 id: "robe",
                 label: "Robe",
-                getPath: (bt, anim) =>
-                    `torso/robes/robe/${bt}/${anim}.png`,
+                getPath: (bt, anim) => getTorsoPath("robe", bt, anim),
             },
         ],
     },
@@ -499,38 +559,32 @@ export const CATEGORIES = [
             {
                 id: "pants_white",
                 label: "White Pants",
-                getPath: (bt, anim) =>
-                    `legs/pants/white_pants/${bt}/${anim}.png`,
+                getPath: (bt, anim) => getLegsPath("pants_white", bt, anim),
             },
             {
                 id: "pants_teal",
                 label: "Teal Pants",
-                getPath: (bt, anim) =>
-                    `legs/pants/teal_pants/${bt}/${anim}.png`,
+                getPath: (bt, anim) => getLegsPath("pants_teal", bt, anim),
             },
             {
                 id: "pants_red",
                 label: "Red Pants",
-                getPath: (bt, anim) =>
-                    `legs/pants/magenta_pants/${bt}/${anim}.png`,
+                getPath: (bt, anim) => getLegsPath("pants_red", bt, anim),
             },
             {
                 id: "legion_skirt",
                 label: "Legion Skirt",
-                getPath: (bt, anim) =>
-                    `legs/skirts/legion/${bt}/${anim}.png`,
+                getPath: (bt, anim) => getLegsPath("legion_skirt", bt, anim),
             },
             {
                 id: "robe_skirt",
                 label: "Robe Skirt",
-                getPath: (bt, anim) =>
-                    `legs/skirts/robe_skirt/${bt}/${anim}.png`,
+                getPath: (bt, anim) => getLegsPath("robe_skirt", bt, anim),
             },
             {
                 id: "plate_legs",
                 label: "Plate Legs",
-                getPath: (bt, anim) =>
-                    `legs/armor/plate_legs/${bt}/${anim}.png`,
+                getPath: (bt, anim) => getLegsPath("plate_legs", bt, anim),
             },
         ],
     },
@@ -544,32 +598,27 @@ export const CATEGORIES = [
             {
                 id: "shoes_brown",
                 label: "Brown Shoes",
-                getPath: (bt, anim) =>
-                    `feet/shoes/brown_shoes/${bt}/${anim}.png`,
+                getPath: (bt, anim) => getFeetPath("shoes_brown", bt, anim),
             },
             {
                 id: "shoes_black",
                 label: "Black Shoes",
-                getPath: (bt, anim) =>
-                    `feet/shoes/maroon_shoes/${bt}/${anim}.png`,
+                getPath: (bt, anim) => getFeetPath("shoes_black", bt, anim),
             },
             {
                 id: "boots_tall",
                 label: "Tall Boots",
-                getPath: (bt, anim) =>
-                    `feet/boots/brown_tall_boots/${bt}/${anim}.png`,
+                getPath: (bt, anim) => getFeetPath("boots_tall", bt, anim),
             },
             {
                 id: "plate_boots",
                 label: "Plate Boots",
-                getPath: (bt, anim) =>
-                    `feet/armor/plate_boots/${bt}/${anim}.png`,
+                getPath: (bt, anim) => getFeetPath("plate_boots", bt, anim),
             },
             {
                 id: "golden_boots",
                 label: "Golden Boots",
-                getPath: (bt, anim) =>
-                    `feet/boots/golden_boots/${bt}/${anim}.png`,
+                getPath: (bt, anim) => getFeetPath("golden_boots", bt, anim),
             },
         ],
     },
@@ -583,26 +632,22 @@ export const CATEGORIES = [
             {
                 id: "plate_arms",
                 label: "Plate Arms",
-                getPath: (bt, anim) =>
-                    `arms/armor/plate/${bt}/${anim}.png`,
+                getPath: (bt, anim) => getArmsPath("plate_arms", bt, anim),
             },
             {
                 id: "leather_bracers",
                 label: "Leather Bracers",
-                getPath: (bt, anim) =>
-                    `arms/bracers/leather/${bt}/${anim}.png`,
+                getPath: (bt, anim) => getArmsPath("leather_bracers", bt, anim),
             },
             {
                 id: "plate_bracers",
                 label: "Plate Bracers",
-                getPath: (bt, anim) =>
-                    `arms/bracers/plate/${bt}/${anim}.png`,
+                getPath: (bt, anim) => getArmsPath("plate_bracers", bt, anim),
             },
             {
                 id: "gloves",
                 label: "Gloves",
-                getPath: (bt, anim) =>
-                    `arms/gloves/cloth/${bt}/${anim}.png`,
+                getPath: (bt, anim) => getArmsPath("gloves", bt, anim),
             },
         ],
     },
@@ -616,44 +661,37 @@ export const CATEGORIES = [
             {
                 id: "dagger",
                 label: "Dagger",
-                getPath: (bt, anim) =>
-                    `weapons/right hand/dagger/male/${anim}.png`,
+                getPath: (bt, anim) => getWeaponPath("dagger", bt, anim),
             },
             {
                 id: "longsword",
                 label: "Longsword",
-                getPath: (bt, anim) =>
-                    `weapons/right hand/longsword/male/${anim}.png`,
+                getPath: (bt, anim) => getWeaponPath("longsword", bt, anim),
             },
             {
                 id: "rapier",
                 label: "Rapier",
-                getPath: (bt, anim) =>
-                    `weapons/right hand/rapier/male/${anim}.png`,
+                getPath: (bt, anim) => getWeaponPath("rapier", bt, anim),
             },
             {
                 id: "spear",
                 label: "Spear",
-                getPath: (bt, anim) =>
-                    `weapons/right hand/spear/male/${anim}.png`,
+                getPath: (bt, anim) => getWeaponPath("spear", bt, anim),
             },
             {
                 id: "bow",
                 label: "Bow",
-                getPath: (bt, anim) =>
-                    `weapons/left hand/bow/male/${anim}.png`,
+                getPath: (bt, anim) => getWeaponPath("bow", bt, anim),
             },
             {
                 id: "shield_round",
                 label: "Round Shield",
-                getPath: (bt, anim) =>
-                    `weapons/left hand/shield_round/male/${anim}.png`,
+                getPath: (bt, anim) => getWeaponPath("shield_round", bt, anim),
             },
             {
                 id: "shield_kite",
                 label: "Kite Shield",
-                getPath: (bt, anim) =>
-                    `weapons/left hand/shield_kite/male/${anim}.png`,
+                getPath: (bt, anim) => getWeaponPath("shield_kite", bt, anim),
             },
         ],
     },
@@ -667,26 +705,22 @@ export const CATEGORIES = [
             {
                 id: "woodaxe",
                 label: "Wood Axe",
-                getPath: (bt, anim) =>
-                    `tools/woodaxe/male/${anim}.png`,
+                getPath: (bt, anim) => getToolPath("woodaxe", bt, anim),
             },
             {
                 id: "pickaxe",
                 label: "Pickaxe",
-                getPath: (bt, anim) =>
-                    `tools/pickaxe/male/${anim}.png`,
+                getPath: (bt, anim) => getToolPath("pickaxe", bt, anim),
             },
             {
                 id: "hoe",
                 label: "Hoe",
-                getPath: (bt, anim) =>
-                    `tools/hoe/male/${anim}.png`,
+                getPath: (bt, anim) => getToolPath("hoe", bt, anim),
             },
             {
                 id: "wateringcan",
                 label: "Watering Can",
-                getPath: (bt, anim) =>
-                    `tools/wateringcan/male/${anim}.png`,
+                getPath: (bt, anim) => getToolPath("wateringcan", bt, anim),
             },
         ],
     },
