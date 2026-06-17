@@ -31,7 +31,6 @@ Animated Sprites compiles pixel art sprite sheets on-demand, composites them in 
 ## 📂 Project Structure
 
 ```
-lpc-character-animator/
 ├── src/
 │   ├── data/
 │   │   ├── animation-map.js       # Slicing and coordinate definitions for LPC animations
@@ -75,7 +74,7 @@ lpc-character-animator/
 
 1. Clone this repository and navigate to the project directory:
    ```bash
-   cd lpc-character-animator
+   cd LPC-addon
    ```
 2. Install dependencies:
    ```bash
@@ -110,6 +109,27 @@ The compiled files will be located in the `dist/` directory, ready to be package
 
 ## ⚖️ Licensing & Attribution
 
-- **Source Code**: The application code is licensed under the **GNU General Public License, Version 3 (GPLv3)**. See [LICENSE](file:///c:/Projects/LPC-addon/lpc-character-animator/LICENSE) for details.
+- **Source Code**: The application code is licensed under the **GNU General Public License, Version 3 (GPLv3)**. See [LICENSE](LICENSE) for details.
 - **Artwork Assets**: The sprite assets are fetched dynamically from the Universal LPC Spritesheet Character Generator repository. The art assets themselves are created by various community artists under copyleft licenses (CC-BY-SA 3.0, GPLv3, and OGA-BY 3.0). 
   - The embedded **Credits Manager** automatically identifies all authors and licenses for the active character design. Users are required to credit these authors when using the generated graphics.
+
+---
+
+## 🎨 LPC Sprite Assets Credits & Attributions
+
+The sprite assets loaded dynamically by this add-on are created by the community of artists from the **Liberated Pixel Cup (LPC)**. We owe immense gratitude to the creators who open-sourced their designs.
+
+Key contributors and base designers include:
+- **bluecarrot16** (Massive spritesheet compilation, clothing, weapons, and accessories)
+- **Johannes Sjölund (wulax)** (Original female base, hair, clothing, and weapons)
+- **Stephen Challener (Redshrike)** (Original male base concepts and design)
+- **Eliza Wyatt (ElizaWy)** (Base bodies, movement animations, and clothing variants)
+- **Benjamin K. Smith (BenCreating)** (Weapon and clothing spritesheets)
+- **Lanea Zimmerman (Sharm)** (Original base graphics, textures, and style guide concepts)
+- **Daniel Eddeland (daneeklu)** (Original clothing, armor overlays, and hairstyles)
+- **JaidynReiman** (Thick male body bases and animation sets)
+- **makrohn** (Console conversions, sprite assembly, and repository organization)
+
+All dynamically fetched art is subject to copyleft permissions. Anyone using the exported characters in their designs must attribute the original artists. The add-on provides an **Add Credits to Document** button to place these attributions directly onto your canvas automatically.
+
+For the full list of authors, licenses, and raw source links, refer to the [LICENSE](LICENSE) file or inspect the built-in Credits Manager in the add-on panel.
