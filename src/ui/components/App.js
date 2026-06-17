@@ -31,6 +31,7 @@ export class App extends LitElement {
         bodyType: "male",
         head: { ears: "none", nose: "none", eyes: "none" },
         hair: "none",
+        hairColor: "blonde",
         headwear: "none",
         torso: "none",
         legs: "none",

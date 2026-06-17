@@ -14,40 +14,70 @@
  * @param {number} height - Height of the composite canvas (in source pixels)
  * @returns {HTMLCanvasElement} The composited result
  */
+function tintImage(image, colorHex, width, height) {
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(image, 0, 0);
+
+    if (!colorHex) return canvas;
+
+    let r, g, b;
+    if (colorHex.startsWith("#")) {
+        r = parseInt(colorHex.slice(1, 3), 16);
+        g = parseInt(colorHex.slice(3, 5), 16);
+        b = parseInt(colorHex.slice(5, 7), 16);
+    } else {
+        return canvas;
+    }
+
+    const imgData = ctx.getImageData(0, 0, width, height);
+    const data = imgData.data;
+
+    for (let i = 0; i < data.length; i += 4) {
+        if (data[i + 3] > 0) {
+            const lum = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+            // Base blonde hair has a luminance around 180
+            const factor = Math.min(lum / 180, 2.0);
+            
+            data[i] = Math.min(255, r * factor);
+            data[i + 1] = Math.min(255, g * factor);
+            data[i + 2] = Math.min(255, b * factor);
+        }
+    }
+    ctx.putImageData(imgData, 0, 0);
+    return canvas;
+}
+
 export function compositeLayers(layers, width, height) {
     const canvas = document.createElement("canvas");
     canvas.width = width;
     canvas.height = height;
     const ctx = canvas.getContext("2d");
 
-    // Clear with transparent background
     ctx.clearRect(0, 0, width, height);
 
-    // Sort by zPos ascending (back to front)
     const sorted = [...layers].sort((a, b) => a.zPos - b.zPos);
 
     for (const layer of sorted) {
         if (layer.image) {
-            ctx.drawImage(layer.image, 0, 0);
+            if (layer.tint) {
+                const tintedCanvas = tintImage(layer.image, layer.tint, width, height);
+                ctx.drawImage(tintedCanvas, 0, 0);
+            } else {
+                ctx.drawImage(layer.image, 0, 0);
+            }
         }
     }
 
     return canvas;
 }
 
-/**
- * Composite layers for a specific animation and direction.
- * Each layer image is a per-animation PNG (e.g., walk.png) containing 4 directional rows.
- * The result is a composite of all layers for that single animation.
- *
- * @param {Array<{image: HTMLImageElement, zPos: number}>} layers
- * @returns {HTMLCanvasElement|null}
- */
 export function compositeAnimationLayers(layers) {
     const validLayers = layers.filter((l) => l.image);
     if (validLayers.length === 0) return null;
 
-    // Use the first valid layer to determine dimensions
     const refImg = validLayers[0].image;
     const width = refImg.naturalWidth || refImg.width;
     const height = refImg.naturalHeight || refImg.height;

@@ -1,6 +1,6 @@
 import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { CATEGORIES, BODY_TYPES } from "../../data/sheet-definitions";
+import { CATEGORIES, BODY_TYPES, HAIR_COLORS } from "../../data/sheet-definitions";
 import { ANIMATION_GROUPS, DIRECTION_LABELS } from "../../data/animation-map";
 
 @customElement("character-builder")
@@ -34,6 +34,12 @@ export class CharacterBuilder extends LitElement {
     _handleDirectionChange(dir) {
         this.dispatchEvent(new CustomEvent("direction-change", {
             detail: { value: dir }
+        }));
+    }
+
+    _handleHairColorChange(colorId) {
+        this.dispatchEvent(new CustomEvent("state-change", {
+            detail: { category: "hairColor", value: colorId }
         }));
     }
 
@@ -77,6 +83,18 @@ export class CharacterBuilder extends LitElement {
                             cat.subcategories.map(sub => this._renderItemGrid(cat.id, sub.items, sub.id, sub.label)) :
                             this._renderItemGrid(cat.id, cat.items)
                         }
+                        ${cat.id === "hair" && this.characterState.hair && this.characterState.hair !== "none" ? html`
+                            <div class="section-title" style="margin-top: 12px;">Hair Color</div>
+                            <div class="color-grid">
+                                ${HAIR_COLORS.map(color => html`
+                                    <div class="color-swatch ${this.characterState.hairColor === color.id ? 'selected' : ''}"
+                                         style="background-color: ${color.hex};"
+                                         title=${color.label}
+                                         @click=${() => this._handleHairColorChange(color.id)}>
+                                    </div>
+                                `)}
+                            </div>
+                        ` : ''}
                     </sp-accordion-item>
                 `)}
             </sp-accordion>

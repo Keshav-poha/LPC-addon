@@ -3,7 +3,7 @@ import { customElement, property, state, query } from "lit/decorators.js";
 import { loadSprites } from "../../engine/sprite-loader";
 import { compositeAnimationLayers } from "../../engine/sprite-compositor";
 import { extractAnimationFrames } from "../../engine/frame-extractor";
-import { CATEGORIES, getAnimationFolder } from "../../data/sheet-definitions";
+import { CATEGORIES, getAnimationFolder, HAIR_COLORS } from "../../data/sheet-definitions";
 import { ANIMATIONS, EXPORT_SIZE, ANIMATION_FPS } from "../../data/animation-map";
 import { encodeGif } from "../gif-exporter";
 
@@ -141,7 +141,12 @@ export class AnimationPreview extends LitElement {
                             const path = item.getPath(this.characterState.bodyType, mappedAnim);
                             if (path) {
                                 pathsToLoad.push(path);
-                                layerInfo.push({ path, zPos: cat.zPos });
+                                let tint = null;
+                                if (cat.id === "hair" && this.characterState.hairColor) {
+                                    const colorDef = HAIR_COLORS.find(c => c.id === this.characterState.hairColor);
+                                    if (colorDef) tint = colorDef.hex;
+                                }
+                                layerInfo.push({ path, zPos: cat.zPos, tint });
                             }
                         }
                     }
@@ -159,7 +164,8 @@ export class AnimationPreview extends LitElement {
         // 3. Match images to layer info for z-ordering
         const layers = layerInfo.map((info, index) => ({
             image: images[index],
-            zPos: info.zPos
+            zPos: info.zPos,
+            tint: info.tint
         })).filter(l => l.image !== null); // remove failed loads
         
             // 4. Composite
