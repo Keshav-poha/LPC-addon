@@ -16,7 +16,6 @@ import { LitElement, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { style } from "./App.css.js";
 
-import { RuntimeType } from "https://new.express.adobe.com/static/add-on-sdk/sdk.js";
 
 import "./AnimationPreview.js";
 import "./CharacterBuilder.js";
@@ -50,9 +49,14 @@ export class App extends LitElement {
     }
 
     async firstUpdated() {
-        // Get the UI runtime.
-        const { runtime } = this.addOnUISdk.instance;
-        this._sandboxProxy = await runtime.apiProxy(RuntimeType.documentSandbox);
+        try {
+            // Get the UI runtime.
+            const { runtime } = this.addOnUISdk.instance;
+            this._sandboxProxy = await runtime.apiProxy("documentSandbox");
+            console.log("Document Sandbox Proxy initialized successfully.");
+        } catch (error) {
+            console.error("Failed to initialize Document Sandbox Proxy:", error);
+        }
     }
 
     _handleStateChange(e) {
