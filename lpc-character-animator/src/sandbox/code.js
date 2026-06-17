@@ -17,11 +17,10 @@ function start() {
             const textNode = editor.createText(textStr);
             
             // Set font size to be small
-            const textContent = textNode.fullContent;
-            textContent.characterStyles.forEach(style => {
-                style.fontSize = 12;
-            });
-            textNode.fullContent = textContent;
+            textNode.fullContent.applyCharacterStyles(
+                { fontSize: 12 },
+                { start: 0, length: textStr.length }
+            );
 
             // Position at the bottom of the page if possible
             const page = editor.context.currentPage;

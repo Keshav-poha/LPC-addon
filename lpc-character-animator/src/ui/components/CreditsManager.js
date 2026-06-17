@@ -21,11 +21,32 @@ export class CreditsManager extends LitElement {
     async _copyCredits() {
         const text = formatCreditsText(this._credits);
         try {
-            await navigator.clipboard.writeText(text);
-            // Could show a toast/tooltip here if desired
-            console.log("Credits copied to clipboard");
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(text);
+                console.log("Credits copied to clipboard");
+            } else {
+                throw new Error("Clipboard API not available");
+            }
         } catch (err) {
-            console.error("Failed to copy credits", err);
+            console.warn("Clipboard API failed, using fallback", err);
+            try {
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                textArea.style.position = "fixed";
+                textArea.style.left = "-999999px";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                const successful = document.execCommand('copy');
+                textArea.remove();
+                if (successful) {
+                    console.log("Credits copied using fallback");
+                } else {
+                    console.error("Fallback copy command failed");
+                }
+            } catch (fallbackErr) {
+                console.error("Failed to copy credits entirely", fallbackErr);
+            }
         }
     }
 
