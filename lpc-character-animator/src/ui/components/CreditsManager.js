@@ -19,32 +19,25 @@ export class CreditsManager extends LitElement {
     }
 
     async _copyCredits() {
-        console.log("Copy Credits clicked. Current credits:", this._credits);
         const text = formatCreditsText(this._credits);
         try {
             await navigator.clipboard.writeText(text);
-            console.log("Credits copied to clipboard successfully.");
+            // Could show a toast/tooltip here if desired
+            console.log("Credits copied to clipboard");
         } catch (err) {
-            console.error("Failed to copy credits:", err);
+            console.error("Failed to copy credits", err);
         }
     }
 
     _addCreditsToDocument() {
-        console.log("Add Credits clicked. Current credits:", this._credits);
-        if (!this._credits || !this._credits.authors || !this._credits.authors.length) {
-            console.warn("No authors to attribute!");
-            return;
-        }
+        if (!this._credits.authors.length) return;
         
         let text = "LPC Asset Credits: ";
         text += "Authors: " + this._credits.authors.join(", ") + ". ";
         text += "Licenses: " + this._credits.licenses.join(", ") + ".";
         
-        console.log("Dispatching add-credits-to-document event from CreditsManager:", text);
         this.dispatchEvent(new CustomEvent("add-credits-to-document", {
-            detail: { text },
-            bubbles: true,
-            composed: true
+            detail: { text }
         }));
     }
 
@@ -62,10 +55,10 @@ export class CreditsManager extends LitElement {
                 <ul class="credits-list">
                     ${this._credits.licenses.map(l => html`<li>${l}</li>`)}
                 </ul>
-                <sp-button variant="secondary" size="s" @click=${() => this._copyCredits()} style="width: 100%; margin-bottom: 8px;">
+                <sp-button variant="secondary" size="s" @click=${this._copyCredits} style="width: 100%; margin-bottom: 8px;">
                     Copy Credits
                 </sp-button>
-                <sp-button variant="primary" size="s" @click=${() => this._addCreditsToDocument()} style="width: 100%;">
+                <sp-button variant="primary" size="s" @click=${this._addCreditsToDocument} style="width: 100%;">
                     Add Credits to Document
                 </sp-button>
             </div>
