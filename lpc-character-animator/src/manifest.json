@@ -1,0 +1,25 @@
+{
+    "testId": "d41771ac-1b0e-4a4f-96ee-b3e279152ea5",
+    "name": "Lpc Character Animator",
+    "version": "1.0.0",
+    "manifestVersion": 2,
+    "requirements": {
+        "apps": [
+            {
+                "name": "Express",
+                "apiVersion": 1
+            }
+        ]
+    },
+    "entryPoints": [
+        {
+            "type": "panel",
+            "id": "panel1",
+            "main": "index.html",
+            "documentSandbox": "code.js",
+            "permissions": {
+                "sandbox": ["allow-popups", "allow-popups-to-escape-sandbox", "allow-presentation", "allow-downloads"]
+            }
+        }
+    ]
+}
