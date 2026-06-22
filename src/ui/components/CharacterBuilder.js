@@ -1,6 +1,6 @@
 import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { CATEGORIES, BODY_TYPES, HAIR_COLORS } from "../../data/sheet-definitions";
+import { CATEGORIES, BODY_TYPES, HAIR_COLORS, getAnimationFolder } from "../../data/sheet-definitions";
 import { ANIMATION_GROUPS, DIRECTION_LABELS } from "../../data/animation-map";
 
 @customElement("character-builder")
@@ -103,16 +103,25 @@ export class CharacterBuilder extends LitElement {
 
     _renderItemGrid(catId, items, subcatId = null, label = null) {
         const selectedId = subcatId ? this.characterState[catId]?.[subcatId] : this.characterState[catId];
+        const bodyType = this.characterState.bodyType;
+        const mappedAnim = getAnimationFolder(this.animation);
         
         return html`
             ${label ? html`<div class="section-title">${label}</div>` : ''}
             <div class="item-grid">
-                ${items.map(item => html`
-                    <div class="item-card ${selectedId === item.id ? 'selected' : ''}" 
-                         @click=${() => this._handleCategoryChange(subcatId ? `${catId}.${subcatId}` : catId, item.id)}>
+                ${items.map(item => {
+                    let isCompatible = true;
+                    if (item.id !== "none" && item.getPath) {
+                        const path = item.getPath(bodyType, mappedAnim);
+                        if (path === null) isCompatible = false;
+                    }
+                    
+                    return html`
+                    <div class="item-card ${selectedId === item.id ? 'selected' : ''} ${!isCompatible ? 'disabled' : ''}" 
+                         @click=${() => isCompatible && this._handleCategoryChange(subcatId ? `${catId}.${subcatId}` : catId, item.id)}>
                         <span>${item.label}</span>
                     </div>
-                `)}
+                `})}
             </div>
         `;
     }

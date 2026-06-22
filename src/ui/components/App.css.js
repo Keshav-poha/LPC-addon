@@ -114,6 +114,18 @@ export const style = css`
     background-color: var(--spectrum-global-color-blue-100);
 }
 
+.item-card.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background-color: var(--spectrum-global-color-gray-200);
+    border-color: var(--spectrum-global-color-gray-300);
+}
+
+.item-card.disabled:hover {
+    background-color: var(--spectrum-global-color-gray-200);
+    border-color: var(--spectrum-global-color-gray-300);
+}
+
 .item-card span {
     font-size: 10px;
     text-align: center;
