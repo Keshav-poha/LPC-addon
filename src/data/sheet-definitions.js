@@ -316,8 +316,21 @@ export const CATEGORIES = [
             // Body is always present - items are body types
             // Body color is handled separately via palette
         ],
-        getPath: (bodyType, animation) =>
-            `body/bodies/${bodyType}/${animation}.png`,
+        getPath: (bodyType, animation) => {
+            if (bodyType === "muscular") {
+                const unsupported = ["emote", "climb", "shoot", "combat_idle", "backslash", "halfslash"];
+                if (unsupported.includes(animation)) return null;
+            }
+            if (bodyType === "pregnant") {
+                const unsupported = ["backslash", "halfslash"];
+                if (unsupported.includes(animation)) return null;
+            }
+            if (bodyType === "child") {
+                const unsupported = ["run", "emote", "climb", "spellcast", "thrust", "shoot", "combat_idle", "backslash", "halfslash"];
+                if (unsupported.includes(animation)) return null;
+            }
+            return `body/bodies/${bodyType}/${animation}.png`;
+        },
         getHeadPath: (bodyType, animation) => {
             if (bodyType === "child") {
                 return `head/heads/human/child/${animation}.png`;

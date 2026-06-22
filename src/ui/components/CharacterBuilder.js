@@ -44,15 +44,21 @@ export class CharacterBuilder extends LitElement {
     }
 
     render() {
+        const bodyCategory = CATEGORIES.find(c => c.id === "body");
+        
         return html`
             <div class="controls-row">
                 <sp-picker label="Animation" value=${this.animation} @change=${this._handleAnimationChange} style="width: 100%;">
                     ${Object.entries(ANIMATION_GROUPS).map(([groupId, group]) => html`
                         <sp-menu-group>
                             <span slot="header">${group.label}</span>
-                            ${group.animations.map(anim => html`
-                                <sp-menu-item value=${anim}>${anim}</sp-menu-item>
-                            `)}
+                            ${group.animations.map(anim => {
+                                const mappedAnim = getAnimationFolder(anim);
+                                const isSupported = bodyCategory.getPath(this.characterState.bodyType, mappedAnim) !== null;
+                                return html`
+                                    <sp-menu-item value=${anim} ?disabled=${!isSupported}>${anim}</sp-menu-item>
+                                `;
+                            })}
                         </sp-menu-group>
                     `)}
                 </sp-picker>
