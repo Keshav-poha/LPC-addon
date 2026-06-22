@@ -30,6 +30,7 @@
         "@spectrum-web-components/swatch": "^1.12.1",
         "@spectrum-web-components/tabs": "^1.12.1",
         "@spectrum-web-components/theme": "^1.12.1",
+        "@spectrum-web-components/toast": "^1.12.1",
         "@spectrum-web-components/tooltip": "^1.12.1",
         "gif.js": "^0.2.0",
         "lit": "2.8.0"

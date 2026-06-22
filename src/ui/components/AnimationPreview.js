@@ -7,6 +7,8 @@ import { CATEGORIES, getAnimationFolder, HAIR_COLORS } from "../../data/sheet-de
 import { ANIMATIONS, EXPORT_SIZE, ANIMATION_FPS } from "../../data/animation-map";
 import { encodeGif } from "../gif-exporter";
 
+import "@spectrum-web-components/toast/sp-toast.js";
+
 @customElement("animation-preview")
 export class AnimationPreview extends LitElement {
     @property({ type: Object }) characterState = {};
@@ -18,6 +20,7 @@ export class AnimationPreview extends LitElement {
     @state() isExporting = false;
     @state() exportProgress = 0;
     @state() errorMessage = "";
+    @state() toastOpen = false;
 
     @query("canvas") canvas;
     
@@ -188,7 +191,8 @@ export class AnimationPreview extends LitElement {
             }));
         } catch (e) {
             console.error(e);
-            this.errorMessage = e.toString();
+            this.errorMessage = "The current configuration is not compatible!";
+            this.toastOpen = true;
             this.isLoading = false;
         }
     }
@@ -310,8 +314,7 @@ export class AnimationPreview extends LitElement {
         return html`
             <div class="preview-container">
                 <canvas width="${EXPORT_SIZE}" height="${EXPORT_SIZE}"></canvas>
-                
-                ${this.errorMessage ? html`<div style="position:absolute; bottom:0; width:100%; background:red; color:white; font-size:10px; padding:4px;">${this.errorMessage}</div>` : ''}
+
 
                 <div class="loading-overlay ${this.isLoading || this.isExporting ? "" : "hidden"}">
                     <sp-progress-circle 
@@ -324,6 +327,10 @@ export class AnimationPreview extends LitElement {
                         Cancel
                     </sp-button>
                 </div>
+                
+                <sp-toast ?open=${this.toastOpen} variant="negative" @close=${() => this.toastOpen = false} style="position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); z-index: 20;">
+                    ${this.errorMessage}
+                </sp-toast>
             </div>
             
             <div class="action-row">
