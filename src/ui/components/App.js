@@ -128,6 +128,18 @@ export class App extends LitElement {
         this._animation = validatedAnimation;
     }
 
+    _handleResetCategory(e) {
+        const { catId, subcatId } = e.detail;
+        if (subcatId) {
+            this._characterState = {
+                ...this._characterState,
+                [catId]: { ...this._characterState[catId], [subcatId]: "none" }
+            };
+        } else {
+            this._characterState = { ...this._characterState, [catId]: "none" };
+        }
+    }
+
     _handleDirectionChange(e) {
         this._direction = e.detail.value;
     }
@@ -156,6 +168,7 @@ export class App extends LitElement {
                             .animation=${this._animation}
                             .direction=${this._direction}
                             @sprites-loaded=${this._handleSpritesLoaded}
+                            @reset-category=${this._handleResetCategory}
                         ></animation-preview>
 
                         <character-builder

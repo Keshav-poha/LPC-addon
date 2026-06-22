@@ -105,6 +105,7 @@ export class AnimationPreview extends LitElement {
             const pathsToLoad = [];
             const layerInfo = []; // keep track of zPos and path
             const mappedAnim = getAnimationFolder(this.animation);
+            this._pathToCategoryMap = {};
             
             for (const cat of CATEGORIES) {
                 // Check subcategories (like head -> ears, nose, eyes)
@@ -118,6 +119,7 @@ export class AnimationPreview extends LitElement {
                                 if (path) {
                                     pathsToLoad.push(path);
                                     layerInfo.push({ path, zPos: cat.zPos });
+                                    this._pathToCategoryMap[path] = { catId: cat.id, subcatId: sub.id };
                                 }
                             }
                         }
@@ -150,6 +152,7 @@ export class AnimationPreview extends LitElement {
                                     if (colorDef) tint = colorDef.hex;
                                 }
                                 layerInfo.push({ path, zPos: cat.zPos, tint });
+                                this._pathToCategoryMap[path] = { catId: cat.id, subcatId: null };
                             }
                         }
                     }
@@ -191,6 +194,21 @@ export class AnimationPreview extends LitElement {
             }));
         } catch (e) {
             console.error(e);
+            
+            // Extract failed path and reset that category
+            const match = e.message.match(/Failed to load sprite: (.*)/);
+            if (match && match[1]) {
+                const failedPath = match[1];
+                const categoryInfo = this._pathToCategoryMap?.[failedPath];
+                if (categoryInfo && categoryInfo.catId !== "body") {
+                    this.dispatchEvent(new CustomEvent('reset-category', {
+                        detail: categoryInfo,
+                        bubbles: true,
+                        composed: true
+                    }));
+                }
+            }
+
             this.errorMessage = "Incompatible configuration!";
             this.toastOpen = true;
             this.isLoading = false;
