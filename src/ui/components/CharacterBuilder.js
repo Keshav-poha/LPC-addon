@@ -83,7 +83,24 @@ export class CharacterBuilder extends LitElement {
                 </sp-accordion-item>
 
                 <!-- Other Categories -->
-                ${CATEGORIES.filter(c => c.id !== "body").map(cat => html`
+                ${CATEGORIES.filter(c => c.id !== "body").map(cat => {
+                    let hasValidItems = false;
+                    const bodyType = this.characterState.bodyType;
+                    const mappedAnim = getAnimationFolder(this.animation);
+
+                    if (cat.subcategories) {
+                        for (const sub of cat.subcategories) {
+                            const validSubItems = sub.items.filter(item => item.id !== "none" && (!item.getPath || item.getPath(bodyType, mappedAnim) !== null));
+                            if (validSubItems.length > 0) hasValidItems = true;
+                        }
+                    } else {
+                        const validCatItems = cat.items.filter(item => item.id !== "none" && (!item.getPath || item.getPath(bodyType, mappedAnim) !== null));
+                        if (validCatItems.length > 0) hasValidItems = true;
+                    }
+
+                    if (!hasValidItems) return html``;
+
+                    return html`
                     <sp-accordion-item label=${cat.label}>
                         ${cat.subcategories ? 
                             cat.subcategories.map(sub => this._renderItemGrid(cat.id, sub.items, sub.id, sub.label)) :
@@ -102,32 +119,38 @@ export class CharacterBuilder extends LitElement {
                             </div>
                         ` : ''}
                     </sp-accordion-item>
-                `)}
+                `})}
             </sp-accordion>
         `;
     }
 
     _renderItemGrid(catId, items, subcatId = null, label = null) {
-        const selectedId = subcatId ? this.characterState[catId]?.[subcatId] : this.characterState[catId];
         const bodyType = this.characterState.bodyType;
         const mappedAnim = getAnimationFolder(this.animation);
+        
+        // Filter out incompatible items (except "none")
+        const validItems = items.filter(item => {
+            if (item.id === "none") return true;
+            if (!item.getPath) return true;
+            return item.getPath(bodyType, mappedAnim) !== null;
+        });
+        
+        // If no items except "none" exist, hide this section
+        if (validItems.length <= 1) {
+            return html``;
+        }
+
+        const selectedId = subcatId ? this.characterState[catId]?.[subcatId] : this.characterState[catId];
         
         return html`
             ${label ? html`<div class="section-title">${label}</div>` : ''}
             <div class="item-grid">
-                ${items.map(item => {
-                    let isCompatible = true;
-                    if (item.id !== "none" && item.getPath) {
-                        const path = item.getPath(bodyType, mappedAnim);
-                        if (path === null) isCompatible = false;
-                    }
-                    
-                    return html`
-                    <div class="item-card ${selectedId === item.id ? 'selected' : ''} ${!isCompatible ? 'disabled' : ''}" 
-                         @click=${() => isCompatible && this._handleCategoryChange(subcatId ? `${catId}.${subcatId}` : catId, item.id)}>
+                ${validItems.map(item => html`
+                    <div class="item-card ${selectedId === item.id ? 'selected' : ''}" 
+                         @click=${() => this._handleCategoryChange(subcatId ? `${catId}.${subcatId}` : catId, item.id)}>
                         <span>${item.label}</span>
                     </div>
-                `})}
+                `)}
             </div>
         `;
     }
