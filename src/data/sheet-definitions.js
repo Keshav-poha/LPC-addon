@@ -88,6 +88,9 @@ function getTorsoGender(bt) {
     return null;
 }
 
+const MISSING_PLATE_MAIL = ["run", "combat_idle", "backslash", "halfslash"];
+const MISSING_LEATHER = ["combat_idle", "backslash", "halfslash"];
+
 function getTorsoPath(itemId, bt, anim) {
     const gender = getTorsoGender(bt);
     
@@ -105,12 +108,15 @@ function getTorsoPath(itemId, bt, anim) {
     if (bt === "child" || !gender) return null;
     
     if (itemId === "chain_mail_shirt") {
+        if (MISSING_PLATE_MAIL.includes(anim)) return null;
         return `torso/chainmail/${gender}/${anim}.png`;
     }
     if (itemId === "leather_armor") {
+        if (MISSING_LEATHER.includes(anim)) return null;
         return `torso/armour/leather/${gender}/${anim}.png`;
     }
     if (itemId === "plate_armor") {
+        // Plate armor for torso seems to support everything on CDN, but for consistency we'll allow it.
         return `torso/armour/plate/${gender}/${anim}.png`;
     }
     if (itemId === "shirt_sleeveless") {
@@ -160,6 +166,7 @@ function getLegsPath(itemId, bt, anim) {
     }
     if (itemId === "plate_legs") {
         if (bt === "child" || bt === "pregnant" || bt === "muscular") return null;
+        if (MISSING_PLATE_MAIL.includes(anim)) return null;
         return `legs/armour/plate/${dir}/${anim}.png`;
     }
     return null;
@@ -180,6 +187,7 @@ function getFeetPath(itemId, bt, anim) {
     }
     if (itemId === "plate_boots") {
         if (bt === "child" || bt === "pregnant" || bt === "teen" || bt === "muscular") return null;
+        if (MISSING_PLATE_MAIL.includes(anim)) return null;
         const plateDir = (bt === "female") ? "female" : "male";
         return `feet/armour/plate/${plateDir}/${anim}/steel.png`;
     }
@@ -194,12 +202,19 @@ function getArmsPath(itemId, bt, anim) {
     const dir = (bt === "female" || bt === "pregnant" || bt === "teen") ? "thin" : "male";
     
     if (itemId === "plate_arms") {
+        if (MISSING_PLATE_MAIL.includes(anim)) return null;
         return `arms/armour/plate/${dir}/${anim}.png`;
     }
-    if (itemId === "leather_bracers" || itemId === "plate_bracers") {
+    if (itemId === "leather_bracers") {
+        if (MISSING_LEATHER.includes(anim)) return null;
+        return `arms/bracers/${dir}/${anim}.png`;
+    }
+    if (itemId === "plate_bracers") {
+        if (MISSING_LEATHER.includes(anim)) return null; // Plate bracers have the same missing anims as leather
         return `arms/bracers/${dir}/${anim}.png`;
     }
     if (itemId === "gloves") {
+        if (MISSING_LEATHER.includes(anim)) return null; // Gloves missing the same as leather
         return `arms/hands/gloves/${dir}/${anim}.png`;
     }
     return null;
@@ -501,8 +516,11 @@ export const CATEGORIES = [
             {
                 id: "chain_helmet",
                 label: "Chain Helmet",
-                getPath: (bt, anim) =>
-                    bt === "child" ? null : `hat/helmet/mail/adult/${anim}.png`,
+                getPath: (bt, anim) => {
+                    if (bt === "child") return null;
+                    if (MISSING_PLATE_MAIL.includes(anim)) return null;
+                    return `hat/helmet/mail/adult/${anim}.png`;
+                }
             },
             {
                 id: "leather_cap",
@@ -513,8 +531,11 @@ export const CATEGORIES = [
             {
                 id: "plate_helmet",
                 label: "Plate Helmet",
-                getPath: (bt, anim) =>
-                    bt === "child" ? null : `hat/helmet/bascinet/adult/${anim}.png`,
+                getPath: (bt, anim) => {
+                    if (bt === "child") return null;
+                    if (MISSING_PLATE_MAIL.includes(anim)) return null;
+                    return `hat/helmet/bascinet/adult/${anim}.png`;
+                }
             },
             {
                 id: "tiara",
@@ -530,8 +551,11 @@ export const CATEGORIES = [
             {
                 id: "hood_cloth",
                 label: "Hood (Cloth)",
-                getPath: (bt, anim) =>
-                    bt === "child" ? null : `hat/cloth/hood/adult/${anim}.png`,
+                getPath: (bt, anim) => {
+                    if (bt === "child") return null;
+                    if (MISSING_LEATHER.includes(anim)) return null;
+                    return `hat/cloth/hood/adult/${anim}.png`;
+                }
             },
             {
                 id: "hood_robe",
