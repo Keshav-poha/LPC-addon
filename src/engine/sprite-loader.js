@@ -67,7 +67,7 @@ export async function loadSprite(relativePath) {
         return pendingLoads.get(relativePath);
     }
 
-    const loadPromise = new Promise((resolve) => {
+    const loadPromise = new Promise((resolve, reject) => {
         const img = new Image();
         img.crossOrigin = "anonymous";
         img.onload = () => {
@@ -78,7 +78,7 @@ export async function loadSprite(relativePath) {
         img.onerror = () => {
             console.warn(`Failed to load sprite: ${relativePath}`);
             pendingLoads.delete(relativePath);
-            resolve(null);
+            reject(new Error(`Failed to load sprite: ${relativePath}`));
         };
         img.src = getSpriteUrl(relativePath);
     });
