@@ -17,6 +17,8 @@ import { customElement, property, state } from "lit/decorators.js";
 import { style } from "./App.css.js";
 
 
+import { CATEGORIES, getAnimationFolder } from "../../data/sheet-definitions";
+
 import "./AnimationPreview.js";
 import "./CharacterBuilder.js";
 import "./CreditsManager.js";
@@ -60,21 +62,70 @@ export class App extends LitElement {
         }
     }
 
+    _validateState(newState, newAnimation) {
+        let validatedState = { ...newState };
+        let validatedAnimation = newAnimation;
+
+        // 1. Validate Animation: is the current animation supported by the current bodyType?
+        const bodyCategory = CATEGORIES.find(c => c.id === "body");
+        let mappedAnim = getAnimationFolder(validatedAnimation);
+        
+        if (bodyCategory.getPath(validatedState.bodyType, mappedAnim) === null) {
+            // Fallback to "walk" which is supported by everything
+            validatedAnimation = "walk";
+            mappedAnim = getAnimationFolder("walk");
+        }
+
+        // 2. Validate all equipped items: are they supported by the (possibly updated) bodyType and animation?
+        for (const cat of CATEGORIES) {
+            if (cat.id === "body") continue;
+
+            if (cat.subcategories) {
+                for (const sub of cat.subcategories) {
+                    const selectedItemId = validatedState[cat.id]?.[sub.id];
+                    if (selectedItemId && selectedItemId !== "none") {
+                        const item = sub.items.find(i => i.id === selectedItemId);
+                        if (item && item.getPath && item.getPath(validatedState.bodyType, mappedAnim) === null) {
+                            validatedState[cat.id] = { ...validatedState[cat.id], [sub.id]: "none" };
+                        }
+                    }
+                }
+            } else {
+                const selectedItemId = validatedState[cat.id];
+                if (selectedItemId && selectedItemId !== "none") {
+                    const item = cat.items.find(i => i.id === selectedItemId);
+                    if (item && item.getPath && item.getPath(validatedState.bodyType, mappedAnim) === null) {
+                        validatedState[cat.id] = "none";
+                    }
+                }
+            }
+        }
+
+        return { validatedState, validatedAnimation };
+    }
+
     _handleStateChange(e) {
         const { category, value } = e.detail;
+        let newState;
         if (category.includes('.')) {
             const [cat, sub] = category.split('.');
-            this._characterState = {
+            newState = {
                 ...this._characterState,
                 [cat]: { ...this._characterState[cat], [sub]: value }
             };
         } else {
-            this._characterState = { ...this._characterState, [category]: value };
+            newState = { ...this._characterState, [category]: value };
         }
+        
+        const { validatedState, validatedAnimation } = this._validateState(newState, this._animation);
+        this._characterState = validatedState;
+        this._animation = validatedAnimation;
     }
 
     _handleAnimationChange(e) {
-        this._animation = e.detail.value;
+        const { validatedState, validatedAnimation } = this._validateState(this._characterState, e.detail.value);
+        this._characterState = validatedState;
+        this._animation = validatedAnimation;
     }
 
     _handleDirectionChange(e) {
