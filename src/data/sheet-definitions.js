@@ -92,12 +92,12 @@ function getTorsoPath(itemId, bt, anim) {
     const gender = getTorsoGender(bt);
     
     if (itemId === "longsleeve_white") {
-        if (bt === "child") return `torso/clothes/shirt/child/${anim}/white.png`;
+        if (bt === "child") return anim === "walk" ? `torso/clothes/shirt/child/walk/white.png` : null;
         if (!gender) return null;
         return `torso/clothes/longsleeve/longsleeve/${gender}/${anim}.png`;
     }
     if (itemId === "longsleeve_laced") {
-        if (bt === "child") return `torso/clothes/shirt/child/${anim}/red.png`; // Fallback to red shirt for child
+        if (bt === "child") return anim === "walk" ? `torso/clothes/shirt/child/walk/red.png` : null; // Fallback to red shirt for child
         if (gender !== "male") return null;
         return `torso/clothes/longsleeve/laced/male/${anim}/white.png`;
     }
@@ -137,6 +137,8 @@ function getLegsPrefix(bt) {
 function getLegsPath(itemId, bt, anim) {
     const dir = getLegsPrefix(bt);
     if (!dir) return null;
+    
+    if (bt === "child" && anim !== "walk") return null;
     
     if (itemId === "pants_white") {
         return `legs/pants/${dir}/${anim}/white.png`;
