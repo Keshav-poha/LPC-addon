@@ -191,9 +191,13 @@ export class AnimationPreview extends LitElement {
             }));
         } catch (e) {
             console.error(e);
-            this.errorMessage = "The current configuration is not compatible!";
+            this.errorMessage = "Incompatible configuration!";
             this.toastOpen = true;
             this.isLoading = false;
+            
+            setTimeout(() => {
+                this.toastOpen = false;
+            }, 3000);
         }
     }
 
@@ -335,7 +339,7 @@ export class AnimationPreview extends LitElement {
                 </sp-button>
             </div>
 
-            <sp-toast ?open=${this.toastOpen} variant="negative" @close=${() => this.toastOpen = false} style="position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 1000;">
+            <sp-toast ?open=${this.toastOpen} variant="negative" @close=${() => this.toastOpen = false} style="position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 1000; white-space: nowrap; max-width: 90vw; font-size: 12px; padding: 0 12px;">
                 ${this.errorMessage}
             </sp-toast>
         `;
