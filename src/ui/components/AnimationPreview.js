@@ -327,10 +327,6 @@ export class AnimationPreview extends LitElement {
                         Cancel
                     </sp-button>
                 </div>
-                
-                <sp-toast ?open=${this.toastOpen} variant="negative" @close=${() => this.toastOpen = false} style="position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); z-index: 20;">
-                    ${this.errorMessage}
-                </sp-toast>
             </div>
             
             <div class="action-row">
@@ -338,6 +334,10 @@ export class AnimationPreview extends LitElement {
                     Add to Document
                 </sp-button>
             </div>
+
+            <sp-toast ?open=${this.toastOpen} variant="negative" @close=${() => this.toastOpen = false} style="position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 1000;">
+                ${this.errorMessage}
+            </sp-toast>
         `;
     }
 }
