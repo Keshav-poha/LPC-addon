@@ -91,7 +91,6 @@ export class AnimationPreview extends LitElement {
     }
 
     async _loadAndComposite() {
-        this.errorMessage = "";
         if (!this.characterState.bodyType) return;
         
         // Create a unique token for this load operation
