@@ -91,6 +91,14 @@ function getTorsoGender(bt) {
 const MISSING_PLATE_MAIL = ["run", "combat_idle", "backslash", "halfslash"];
 const MISSING_LEATHER = ["combat_idle", "backslash", "halfslash"];
 
+const SUPPORTED_LACED_SLEEVELESS = ["walk", "slash", "spellcast", "thrust", "shoot", "hurt"];
+const SUPPORTED_VEST = ["walk", "slash", "spellcast", "thrust", "shoot", "hurt", "idle"];
+const SUPPORTED_ROBE = ["walk", "slash", "spellcast", "hurt"];
+const SUPPORTED_DAGGER = ["walk", "thrust", "slash", "hurt"];
+const SUPPORTED_SWORD = ["walk", "hurt"];
+const SUPPORTED_SPEAR = ["walk", "thrust", "hurt"];
+const SUPPORTED_SHIELD = ["walk", "thrust", "slash"];
+
 function getTorsoPath(itemId, bt, anim) {
     const gender = getTorsoGender(bt);
     
@@ -102,6 +110,7 @@ function getTorsoPath(itemId, bt, anim) {
     if (itemId === "longsleeve_laced") {
         if (bt === "child") return anim === "walk" ? `torso/clothes/shirt/child/walk/red.png` : null; // Fallback to red shirt for child
         if (gender !== "male") return null;
+        if (!SUPPORTED_LACED_SLEEVELESS.includes(anim)) return null;
         return `torso/clothes/longsleeve/laced/male/${anim}/white.png`;
     }
 
@@ -120,14 +129,17 @@ function getTorsoPath(itemId, bt, anim) {
         return `torso/armour/plate/${gender}/${anim}.png`;
     }
     if (itemId === "shirt_sleeveless") {
+        if (!SUPPORTED_LACED_SLEEVELESS.includes(anim)) return null;
         return `torso/clothes/sleeveless/sleeveless/${gender}/${anim}/white.png`;
     }
     if (itemId === "vest_leather") {
         if (gender !== "male") return null;
+        if (!SUPPORTED_VEST.includes(anim)) return null;
         return `torso/clothes/vest/male/${anim}/leather.png`;
     }
     if (itemId === "robe") {
         if (gender !== "female") return null;
+        if (!SUPPORTED_ROBE.includes(anim)) return null;
         return `torso/clothes/robe/female/${anim}/white.png`;
     }
     return null;
@@ -154,11 +166,13 @@ function getLegsPath(itemId, bt, anim) {
         return `legs/pants/${dir}/${anim}/teal.png`;
     }
     if (itemId === "pants_red") {
+        if (dir === "male" && !SUPPORTED_LACED_SLEEVELESS.includes(anim)) return null;
         const colorFile = (dir === "child" || dir === "thin") ? "red.png" : "magenta.png";
         return `legs/pants/${dir}/${anim}/${colorFile}`;
     }
     if (itemId === "legion_skirt") {
         if (bt === "child") return null;
+        if (["halfslash", "combat_idle", "backslash"].includes(anim)) return null;
         return `legs/skirts/legion/${dir}/${anim}.png`;
     }
     if (itemId === "robe_skirt") {
@@ -187,7 +201,8 @@ function getFeetPath(itemId, bt, anim) {
     }
     if (itemId === "plate_boots") {
         if (bt === "child" || bt === "pregnant" || bt === "teen" || bt === "muscular") return null;
-        if (MISSING_PLATE_MAIL.includes(anim)) return null;
+        const missingPlateBoots = ["run", "combat_idle", "backslash", "halfslash", "jump", "sit", "climb", "emote"];
+        if (missingPlateBoots.includes(anim)) return null;
         const plateDir = (bt === "female") ? "female" : "male";
         return `feet/armour/plate/${plateDir}/${anim}/steel.png`;
     }
@@ -224,15 +239,19 @@ function getWeaponPath(itemId, bt, anim) {
     if (bt === "child") return null;
     
     if (itemId === "dagger") {
+        if (!SUPPORTED_DAGGER.includes(anim)) return null;
         return `weapon/sword/dagger/${anim}/dagger.png`;
     }
     if (itemId === "longsword") {
+        if (!SUPPORTED_SWORD.includes(anim)) return null;
         return `weapon/sword/longsword/${anim}/longsword.png`;
     }
     if (itemId === "rapier") {
+        if (!SUPPORTED_SWORD.includes(anim)) return null;
         return `weapon/sword/rapier/${anim}/rapier.png`;
     }
     if (itemId === "spear") {
+        if (!SUPPORTED_SPEAR.includes(anim)) return null;
         return `weapon/polearm/spear/foreground/${anim}/steel.png`;
     }
     if (itemId === "bow") {
@@ -249,10 +268,12 @@ function getWeaponPath(itemId, bt, anim) {
     }
     if (itemId === "shield_round") {
         if (bt === "teen") return null;
+        if (!SUPPORTED_SHIELD.includes(anim)) return null;
         return `shield/round/${anim}.png`;
     }
     if (itemId === "shield_kite") {
         if (bt === "teen") return null;
+        if (!SUPPORTED_SHIELD.includes(anim)) return null;
         const dir = (bt === "female" || bt === "pregnant") ? "female" : "male";
         return `shield/kite/${dir}/${anim}/kite_gray.png`;
     }
@@ -264,15 +285,19 @@ function getToolPath(itemId, bt, anim) {
     const gender = (bt === "female" || bt === "pregnant" || bt === "teen") ? "female" : "male";
     
     if (itemId === "woodaxe") {
+        if (anim !== "walk") return null;
         return `tools/smash/universal/${gender}/${anim}/axe.png`;
     }
     if (itemId === "pickaxe") {
+        if (anim !== "walk") return null;
         return `tools/smash/universal/${gender}/${anim}/pickaxe.png`;
     }
     if (itemId === "hoe") {
+        if (anim !== "walk" && anim !== "thrust") return null;
         return `tools/thrust/foreground/${anim}/hoe.png`;
     }
     if (itemId === "wateringcan") {
+        if (anim !== "walk" && anim !== "thrust") return null;
         return `tools/thrust/foreground/${anim}/watering.png`;
     }
     return null;
@@ -396,19 +421,19 @@ export const CATEGORIES = [
                         id: "bignose",
                         label: "Big Nose",
                         getPath: (bt, anim) =>
-                            bt === "child" ? null : `head/nose/big/adult/${anim}.png`,
+                            bt === "child" || anim === "climb" ? null : `head/nose/big/adult/${anim}.png`,
                     },
                     {
                         id: "buttonnose",
                         label: "Button Nose",
                         getPath: (bt, anim) =>
-                            bt === "child" ? null : `head/nose/button/adult/${anim}.png`,
+                            bt === "child" || anim === "climb" ? null : `head/nose/button/adult/${anim}.png`,
                     },
                     {
                         id: "straightnose",
                         label: "Straight Nose",
                         getPath: (bt, anim) =>
-                            bt === "child" ? null : `head/nose/straight/adult/${anim}.png`,
+                            bt === "child" || anim === "climb" ? null : `head/nose/straight/adult/${anim}.png`,
                     },
                 ],
             },
@@ -421,33 +446,41 @@ export const CATEGORIES = [
                         id: "eyes_blue",
                         label: "Blue Eyes",
                         getPath: (bt, anim) =>
-                            bt === "child"
-                                ? `eyes/human/child/${anim}/blue.png`
-                                : `eyes/human/adult/neutral/default/${anim}/blue.png`,
+                            anim === "climb"
+                                ? null
+                                : (bt === "child"
+                                    ? `eyes/human/child/${anim}/blue.png`
+                                    : `eyes/human/adult/neutral/default/${anim}/blue.png`),
                     },
                     {
                         id: "eyes_brown",
                         label: "Brown Eyes",
                         getPath: (bt, anim) =>
-                            bt === "child"
-                                ? `eyes/human/child/${anim}/brown.png`
-                                : `eyes/human/adult/neutral/default/${anim}/brown.png`,
+                            anim === "climb"
+                                ? null
+                                : (bt === "child"
+                                    ? `eyes/human/child/${anim}/brown.png`
+                                    : `eyes/human/adult/neutral/default/${anim}/brown.png`),
                     },
                     {
                         id: "eyes_green",
                         label: "Green Eyes",
                         getPath: (bt, anim) =>
-                            bt === "child"
-                                ? `eyes/human/child/${anim}/green.png`
-                                : `eyes/human/adult/neutral/default/${anim}/green.png`,
+                            anim === "climb"
+                                ? null
+                                : (bt === "child"
+                                    ? `eyes/human/child/${anim}/green.png`
+                                    : `eyes/human/adult/neutral/default/${anim}/green.png`),
                     },
                     {
                         id: "eyes_gray",
                         label: "Gray Eyes",
                         getPath: (bt, anim) =>
-                            bt === "child"
-                                ? `eyes/human/child/${anim}/gray.png`
-                                : `eyes/human/adult/neutral/default/${anim}/gray.png`,
+                            anim === "climb"
+                                ? null
+                                : (bt === "child"
+                                    ? `eyes/human/child/${anim}/gray.png`
+                                    : `eyes/human/adult/neutral/default/${anim}/gray.png`),
                     },
                 ],
             },
