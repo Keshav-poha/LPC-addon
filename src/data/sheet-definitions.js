@@ -89,9 +89,20 @@ function getTorsoGender(bt) {
 }
 
 function getTorsoPath(itemId, bt, anim) {
-    if (bt === "child") return null;
     const gender = getTorsoGender(bt);
-    if (!gender) return null;
+    
+    if (itemId === "longsleeve_white") {
+        if (bt === "child") return `torso/clothes/shirt/child/${anim}/white.png`;
+        if (!gender) return null;
+        return `torso/clothes/longsleeve/longsleeve/${gender}/${anim}.png`;
+    }
+    if (itemId === "longsleeve_laced") {
+        if (bt === "child") return `torso/clothes/shirt/child/${anim}/red.png`; // Fallback to red shirt for child
+        if (gender !== "male") return null;
+        return `torso/clothes/longsleeve/laced/male/${anim}/white.png`;
+    }
+
+    if (bt === "child" || !gender) return null;
     
     if (itemId === "chain_mail_shirt") {
         return `torso/chainmail/${gender}/${anim}.png`;
@@ -101,13 +112,6 @@ function getTorsoPath(itemId, bt, anim) {
     }
     if (itemId === "plate_armor") {
         return `torso/armour/plate/${gender}/${anim}.png`;
-    }
-    if (itemId === "longsleeve_laced") {
-        if (gender !== "male") return null;
-        return `torso/clothes/longsleeve/laced/male/${anim}/white.png`;
-    }
-    if (itemId === "longsleeve_white") {
-        return `torso/clothes/longsleeve/longsleeve/${gender}/${anim}.png`;
     }
     if (itemId === "shirt_sleeveless") {
         return `torso/clothes/sleeveless/sleeveless/${gender}/${anim}/white.png`;
